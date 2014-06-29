@@ -28,6 +28,8 @@ function RNScreen:new(o)
         viewport = nil,
         layer = nil,
         layers = nil,
+        orderedLayers = nil,
+        defaultTarget = nil,
         visible = true
     }
 
@@ -59,7 +61,38 @@ function RNScreen:initWith(width, height, screenWidth, screenHeight)
 
     self.layer:setPartition(self.mainPartition)
 
+    self.orderedLayers = {{name = RNLayer.MAIN_LAYER, layer = self.layer}}
+
     MOAISim.pushRenderPass(self.layer)
+end
+
+function RNScreen:createLayer(name)
+  local layer,partition = self.layers:createLayerWithPartition(name, self.viewport)
+  table.insert(self.orderedLayers, {name = name, layer = layer})
+  
+  return layer
+end
+
+function RNScreen:switchLayer(name)
+  self.layer = self.layers:get(name)
+  self.mainPartition = self.layer:getPartition()
+end
+
+function RNScreen:getOrderedLayers()
+  return self.orderedLayers
+end
+
+function RNScreen:setLayersOrder(layersOrder)
+  local newLayersOrder = {}
+  for _, name in ipairs(layersOrder) do
+    table.insert(newLayersOrder, {name = name, layer = self.layers:get(name)})
+  end
+  
+  self.orderedLayers = newLayersOrder
+end
+
+function RNScreen:setDefaultTarget(defaultTarget)
+  self.defaultTarget = defaultTarget
 end
 
 --[[
@@ -142,39 +175,36 @@ function RNScreen:removeRNObject(object, layer)
     object.layer = nil
 end
 
-function RNScreen:getObjectWithHighestLevelOn(x, y)
-
-
-
+function RNScreen:getObjectWithHighestLevelOn(x, y, layer)
+    layer = layer or self.layer
+    local partition = layer:getPartition() or self.mainPartition
 
     local props
     if config.stretch.status == true then
         if config.stretch.letterbox == true then
             local toGetX, toGetY = (x - RNFactory.ofx) * RNFactory.Ax, (y - RNFactory.ofy) * RNFactory.Ay
-            props = { self.mainPartition:propListForPoint(toGetX, toGetY + RNFactory.statusBarHeight * y / RNFactory.height, 0, MOAILayer.SORT_PRIORITY_DESCENDING) }
+            props = { partition:propListForPoint(toGetX, toGetY + RNFactory.statusBarHeight * y / RNFactory.height, 0, MOAILayer.SORT_PRIORITY_DESCENDING) }
         else
             local toGetX, toGetY = (x - RNFactory.ofx) * RNFactory.Ax, (y - RNFactory.ofy) * RNFactory.Ay
-            props = { self.mainPartition:propListForPoint(toGetX, toGetY + RNFactory.statusBarHeight * y / RNFactory.height, 0, MOAILayer.SORT_PRIORITY_DESCENDING) }
+            props = { partition:propListForPoint(toGetX, toGetY + RNFactory.statusBarHeight * y / RNFactory.height, 0, MOAILayer.SORT_PRIORITY_DESCENDING) }
         end
     else
-        props = { self.mainPartition:propListForPoint(x, y + RNFactory.statusBarHeight * y / RNFactory.height, 0, MOAILayer.SORT_PRIORITY_DESCENDING) }
+        props = { partition:propListForPoint(x, y + RNFactory.statusBarHeight * y / RNFactory.height, 0, MOAILayer.SORT_PRIORITY_DESCENDING) }
     end
 
-
-    for i = 1, #props do
-        local currentProp = props[i]
-        if currentProp.RNObject.touchable == true then
-            return currentProp.RNObject
-        end
+    for _, currentProp in ipairs(props) do
+      if currentProp.RNObject and currentProp.RNObject.touchable then
+        return currentProp.RNObject
+      end
     end
+
+  return self.defaultTarget
 end
 
-function RNScreen:getRNObjectWithHighestLevelOn(x, y)
-    if self:getObjectWithHighestLevelOn(x, y) ~= nil then
-        return self:getObjectWithHighestLevelOn(x, y)
-    else
-        return nil
-    end
+function RNScreen:getRNObjectWithHighestLevelOn(x, y, layer)
+  layer = layer or self.layer
+
+  return self:getObjectWithHighestLevelOn(x, y, layer)
 end
 
 function RNScreen:getImages()

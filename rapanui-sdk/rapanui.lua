@@ -11,8 +11,8 @@
 -- license based on the Mozilla Public License, with the added requirement that you attribute
 -- Moai (http://getmoai.com/) and RapaNui in the credits of your program.
 ]]
-config = require("config")
 
+config = require("config")
 
 RNObject = require("rapanui-sdk/RNObject")
 
@@ -76,4 +76,3 @@ RNGraphicsManager = require("rapanui-sdk/RNGraphicsManager")
 RNBitmapText = require("rapanui-sdk/RNBitmapText")
 --starts main thread
 RNMainThread.startMainThread()
-

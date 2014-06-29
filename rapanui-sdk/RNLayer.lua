@@ -17,7 +17,8 @@
 
 RNLayer = {
     LAYER_WITH_SAME_NAME_EXISTS = "layer with same name already exists",
-    MAIN_LAYER = "mainlayer"
+    MAIN_LAYER = "mainlayer",
+    HUD_LAYER = "hudlayer",
 }
 
 function RNLayer:new()
@@ -35,7 +36,7 @@ function RNLayer:createLayer(name,viewport)
 		return nil, RNLayer.LAYER_WITH_SAME_NAME_EXISTS
 	end
 
-    self[index] = {} 
+    self[index] = {}
     self[index].layer = layer
     self[index].name = name
     layer:setViewport(viewport)

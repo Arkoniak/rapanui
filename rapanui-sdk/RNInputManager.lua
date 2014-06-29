@@ -83,16 +83,22 @@ function RNInputManager:getPointerY()
     return self.pointerY
 end
 
+function RNInputManager:getPointer()
+  return self:getPointerX(), self:getPointerY()
+end
 
 function RNInputManager:setPointerX(x)
     self.pointerX = x
 end
 
-
 function RNInputManager:setPointerY(y)
     self.pointerY = y
 end
 
+function RNInputManager:setPointer(x, y)
+  self:setPointerX(x)
+  self:setPointerY(y)
+end
 
 function RNInputManager.setGlobalRNScreen(RNScreen)
     innerInputManager:setScreen(RNScreen)
@@ -204,8 +210,8 @@ function RNInputManager:getListeners()
 end
 
 function onPointer(x, y)
-    innerInputManager:setPointerX(x)
-    innerInputManager:setPointerY(y)
+--    print("MOAI INPUT: ", x, y)
+    innerInputManager:setPointer(x, y)
     if isTOUCHING == true then
         onEvent(MOAITouchSensor.TOUCH_MOVE, -1, x, y, 0)
     end
@@ -214,13 +220,11 @@ end
 
 function onClick(down)
     if down then
-        local x = innerInputManager:getPointerX()
-        local y = innerInputManager:getPointerY()
+        local x, y = innerInputManager:getPointer()
         onEvent(MOAITouchSensor.TOUCH_DOWN, -1, x, y, 0)
         isTOUCHING = true
     else
-        local x = innerInputManager:getPointerX()
-        local y = innerInputManager:getPointerY()
+        local x, y = innerInputManager:getPointer()
         onEvent(MOAITouchSensor.TOUCH_UP, -1, x, y, 0)
         isTOUCHING = false
     end
@@ -327,15 +331,21 @@ function onEvent(eventType, idx, x, y, tapCount)
 
         local screen = RNFactory.getCurrentScreen()
 
-        if x == nil then TOUCHES = 0 end
-
-        if x ~= nil then
-            local x, y = RNFactory.screen.layer:wndToWorld(x, y)
-            event.x, event.y = x, y
+        local layersList = screen:getOrderedLayers()
+        local xw, yw, currentTarget
+        
+        event.winX, event.winY = x, y
+        
+        for _, container in pairs(layersList) do
+          xw, yw = container.layer:wndToWorld(x, y)
+          currentTarget = screen:getRNObjectWithHighestLevelOn(xw, yw, container.layer);
+          if currentTarget ~= nil then
+            break
+          end
         end
-        local currenTarget = screen:getRNObjectWithHighestLevelOn(x, y);
+        event.x, event.y = xw, yw
+    
         event:initWithEventType(eventType)
-
 
         local globallisteners = innerInputManager:getGlobalListenersToEvent("touch")
 
@@ -350,29 +360,27 @@ function onEvent(eventType, idx, x, y, tapCount)
             end
         end
 
-        if currenTarget ~= nil and currenTarget.onTouchCallBackFunction ~= nil then
-            event.target = currenTarget.onTouchCallBackFunction:getTarget()
-            currenTarget.onTouchCallBackFunction:call(event)
+        if currentTarget ~= nil and currentTarget.onTouchCallBackFunction ~= nil then
+            event.target = currentTarget.onTouchCallBackFunction:getTarget()
+            currentTarget.onTouchCallBackFunction:call(event)
         end
 
         --check if the target has value and if has function isListening
-        if (currenTarget ~= nil and currenTarget.isListening == nil) or
-                -- or if currenTarget has a valid value and if is listening on at least one event
-                (currenTarget ~= nil and currenTarget:isListening() == false and DRAGGED_TARGET == nil) then
+        if (currentTarget ~= nil and currentTarget.isListening == nil) or
+                -- or if currentTarget has a valid value and if is listening on at least one event
+                (currentTarget ~= nil and currentTarget:isListening() == false and DRAGGED_TARGET == nil) then
             return
         end
-
-
 
         local target
 
         if (eventType == MOAITouchSensor.TOUCH_DOWN) then
             event.phase = "began"
-            if currenTarget ~= nil then
-                LAST_xSTART = x
-                LAST_ySTART = y
-                DRAGGED_TARGET = currenTarget
-                event.target = currenTarget
+            if currentTarget ~= nil then
+                LAST_xSTART = xw
+                LAST_ySTART = yw
+                DRAGGED_TARGET = currentTarget
+                event.target = currentTarget
                 TOUCHES = TOUCHES + 1
                 event.touchesNumber = TOUCHES
                 DRAGGING = true

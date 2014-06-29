@@ -22,14 +22,13 @@ CENTERED_MODE = 2
 RNObject = {}
 
 local function fieldChangedListener(self, key, value)
-
+    
     getmetatable(self).__object[key] = value
     self = getmetatable(self).__object
 
     if key ~= nil and key == "visible" then
         self:setVisible(value)
     end
-
 
     if key ~= nil and key == "isVisible" then
         self:setVisible(value)
@@ -169,7 +168,6 @@ local function fieldChangedListener(self, key, value)
         end
     end
 end
-
 
 local function fieldAccessListener(self, key)
 
@@ -989,7 +987,7 @@ end
 
 
 function RNObject:getLocation()
-    return self.x, self.y
+    return self:getX(), self:getY()
 end
 
 function RNObject:getX()

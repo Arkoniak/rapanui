@@ -59,9 +59,13 @@ function RNFactory.init()
 
     screenX, screenY = nil
 
-    local name = rawget(_G, 'name') -- looking for *global* 'name'
-    if name == nil then
-        name = "mainwindow"
+    if config.name ~= nil then
+      name = config.name
+    else
+      local name = rawget(_G, 'name') -- looking for *global* 'name'
+      if name == nil then
+          name = "mainwindow"
+      end
     end
 
     --  lwidth, lheight from the SDConfig.lua
@@ -185,8 +189,6 @@ function RNFactory.init()
 
     RNFactory.calculateTouchValues()
 
-
-
     RNInputManager.setGlobalRNScreen(RNFactory.screen)
 end
 
@@ -265,232 +267,176 @@ function RNFactory.createPageSwipe(name, params)
 end
 
 function RNFactory.createImage(image, params)
-    return RNFactory.createImageFrom(image, RNFactory.screen.layers:get(RNLayer.MAIN_LAYER), params)
+--    return RNFactory.createImageFrom(image, RNFactory.screen.layers:get(RNLayer.MAIN_LAYER), params)
+  return RNFactory.createImageFrom(image, RNFactory.screen.layer, params)
 end
 
 function RNFactory.loadImage(image, params)
-    return RNFactory.createImageFrom(image, RNFactory.screen.layers:get(RNLayer.MAIN_LAYER), params, false)
+--    return RNFactory.createImageFrom(image, RNFactory.screen.layers:get(RNLayer.MAIN_LAYER), params, false)
+  return RNFactory.createImageFrom(image, RNFactory.screen.layer, params, false)
 end
 
 function RNFactory.createImageFrom(image, layer, params, putOnScreen)
-    if putOnScreen == nil then
-        putOnScreen = true
-    end
+    local o, deck = RNObject:new():initWithImage2(image)
+    local parentGroup, left, top, width, height
 
-    local parentGroup, left, top
+    putOnScreen = putOnScreen or true
 
-    top = 0
-    left = 0
+    params = params or {}
+    top = params.top or 0
+    left = params.left or 0
+    parentGroup = params.parentGroup or RNFactory.mainGroup
+    width = params.width or o:getOriginalWidth()
+    height = params.height or o:getOriginalHeight()
+    
+    o.x = params.x or (width/2 + left)
+    o.y = params.y or (height/2 + top)
 
-    if (params ~= nil) then
-        if (params.top ~= nil) then
-            top = params.top
-        end
+    o.scaleX = width/o:getOriginalWidth()
+    o.scaleY = height/o:getOriginalHeight()
 
-        if (params.left ~= nil) then
-            left = params.left
-        end
-
-        if (params.parentGroup ~= nil) then
-            parentGroup = params.parentGroup
-        else
-            parentGroup = RNFactory.mainGroup
-        end
-    end
-
-    if (parentGroup == nil) then
-        parentGroup = RNFactory.mainGroup
-    end
-
-
-    local o = RNObject:new()
-    local o, deck = o:initWithImage2(image)
-
-    o.x = o.originalWidth / 2 + left
-    o.y = o.originalHeight / 2 + top
-
-    if putOnScreen == true then
+    if putOnScreen then
         RNFactory.screen:addRNObject(o, nil, layer)
-        o.layer = layer
     end
 
     if parentGroup ~= nil then
         parentGroup:insert(o)
     end
 
-
     return o, deck
 end
 
 function RNFactory.createButton(image, params)
-    return RNFactory.createButtonFrom(image, RNFactory.screen.layers:get(RNLayer.MAIN_LAYER), params)
+    --return RNFactory.createButtonFrom(image, RNFactory.screen.layers:get(RNLayer.MAIN_LAYER), params)
+    return RNFactory.createButtonFrom(image, RNFactory.screen.layer, params)
 end
 
 function RNFactory.loadButton(image, params)
-    return RNFactory.createButtonFrom(image, RNFactory.screen.layers:get(RNLayer.MAIN_LAYER), params, false)
+--    return RNFactory.createButtonFrom(image, RNFactory.screen.layers:get(RNLayer.MAIN_LAYER), params, false)
+    return RNFactory.createButtonFrom(image, RNFactory.screen.layer, params, false)
 end
 
 
 function RNFactory.createButtonFrom(image, layer, params, putOnScreen)
-    if putOnScreen == nil then
-        putOnScreen = true
-    end
+    local rnButtonImage, deck = RNObject:new():initWithImage2(image)
 
-    local parentGroup, left, top
+--    if putOnScreen == nil then
+--        putOnScreen = true
+--    end
+    
+    putOnScreen = putOnScreen or true
 
-    local top, left, size, font, vAlignment, hAlignment
+    local parentGroup
 
-    local xOffset, yOffset = 0, 0
+    local top, left, width, height, size, font, vAlignment, hAlignment, xOffset, yOffset
 
-    font = "arial-rounded.TTF"
-    size = 15
+--    local xOffset, yOffset = 0, 0
+
+--    font = "arial-rounded.TTF"
+--    size = 15
 
     vAlignment = MOAITextBox.CENTER_JUSTIFY
     hAlignment = MOAITextBox.CENTER_JUSTIFY
 
-    top = 0
-    left = 0
+--    top = 0
+--    left = 0
 
-    if (params ~= nil) then
+    params = params or {}
+    top = params.top or 0
+    left = params.left or 0
+    parentGroup = params.parentGroup or RNFactory.mainGroup
+    font = params.font or "arial-rounded.TTF"
+    size = params.size or 15
+    width = params.width or rnButtonImage.originalWidth
+    height = params.height or rnButtonImage.originalHeight
+    vAlignment = params.verticalAlignment or MOAITextBox.CENTER_JUSTIFY
+    hAlignment = params.horizontalAlignment or MOAITextBox.CENTER_JUSTIFY
+    xOffset = params.xOffset or 0
+    yOffset = params.yOffset or 0
+    params.text = params.text or ""
+    
+    rnButtonImage.scaleX = width/rnButtonImage.originalWidth
+    rnButtonImage.scaleY = height/rnButtonImage.originalHeight
 
-        if (params.top ~= nil) then
-            top = params.top
-        end
+    rnButtonImage.x = width / 2 + left
+    rnButtonImage.y = height / 2 + top
 
-        if (params.left ~= nil) then
-            left = params.left
-        end
-
-        if (params.parentGroup ~= nil) then
-            parentGroup = params.parentGroup
-        else
-            parentGroup = RNFactory.mainGroup
-        end
-
-        if (params.top ~= nil) then
-            top = params.top
-        end
-
-        if (params.left ~= nil) then
-            left = params.left
-        end
-
-        if (params.font ~= nil) then
-            font = params.font
-        end
-
-        if (params.size ~= nil) then
-            size = params.size
-        end
-
-        --[[
-      if (params.height ~= nil) then
-          height = params.height
-      end
-
-      if (params.width ~= nil) then
-          width = params.width
-      end
-        ]] --
-
-        if (params.verticalAlignment ~= nil) then
-            vAlignment = params.verticalAlignment
-        end
-
-        if (params.horizontalAlignment ~= nil) then
-            hAlignment = params.horizontalAlignment
-        end
-    end
-
-    if (params.xOffset ~= nil) then
-        xOffset = params.xOffset
-    end
-
-    if (params.yOffset ~= nil) then
-        yOffset = params.yOffset
-    end
-
-    -- init of default RNButtonImage
-    local rnButtonImage = RNObject:new()
-    local rnButtonImage, deck = rnButtonImage:initWithImage2(image)
-
-    rnButtonImage.x = rnButtonImage.originalWidth / 2 + left
-    rnButtonImage.y = rnButtonImage.originalHeight / 2 + top
-    if putOnScreen == true then
+    if putOnScreen then
         RNFactory.screen:addRNObject(rnButtonImage, nil, layer)
     end
 
+    local rnText, gFont = RNText:new():initWithText2(params.text, font, size, width, height, vAlignment, hAlignment)
+    --     RNFactory.mainGroup:insert(rnText)
+    rnText.x = left
+    rnText.y = top
+
+    if putOnScreen then
+        RNFactory.screen:addRNObject(rnText, nil, layer)
+    end
+    
 
     local rnButtonImageOver
 
+    
     if params.imageOver ~= nil then
+      
+        rnButtonImageOver, deck = RNObject:new():initWithImage2(params.imageOver)
 
-        rnButtonImageOver = RNObject:new()
-        rnButtonImageOver, deck = rnButtonImageOver:initWithImage2(params.imageOver)
+--        width = params.width or rnButtonImageOver:originalWidth
+--        height = params.height or rnButtonImageOver:originalHeight
 
-        rnButtonImageOver.x = rnButtonImageOver.originalWidth / 2 + left
-        rnButtonImageOver.y = rnButtonImageOver.originalHeight / 2 + top
+        rnButtonImageOver.x = width / 2 + left
+        rnButtonImageOver.y = height / 2 + top
+        rnButtonImageOver.scaleX = width/rnButtonImageOver.originalWidth
+        rnButtonImageOver.scaleY = height/rnButtonImageOver.originalHeight
 
         rnButtonImageOver:setVisible(false)
 
-        if putOnScreen == true then
+        if putOnScreen then
             RNFactory.screen:addRNObject(rnButtonImageOver, nil, layer)
         end
     end
-
 
     local rnButtonImageDisabled
 
     if params.imageDisabled ~= nil then
 
-        rnButtonImageDisabled = RNObject:new()
-        rnButtonImageDisabled, deck = rnButtonImageDisabled:initWithImage2(params.imageDisabled)
+        rnButtonImageDisabled, deck = RNObject:new():initWithImage2(params.imageDisabled)
 
-        rnButtonImageDisabled.x = rnButtonImageDisabled.originalWidth / 2 + left
-        rnButtonImageDisabled.y = rnButtonImageDisabled.originalHeight / 2 + top
+--        width = params.width or rnButtonImageOver:originalWidth
+--        height = params.height or rnButtonImageOver:originalHeight
+
+        rnButtonImageDisabled.x = width / 2 + left
+        rnButtonImageDisabled.y = height / 2 + top
+        rnButtonImageDisabled.scaleX = width/rnButtonImageDisabled.originalWidth
+        rnButtonImageDisabled.scaleY = height/rnButtonImageDisabled.originalHeight
+
+--        rnButtonImageDisabled.x = rnButtonImageDisabled.originalWidth / 2 + left
+--        rnButtonImageDisabled.y = rnButtonImageDisabled.originalHeight / 2 + top
 
         rnButtonImageDisabled:setVisible(false)
 
-        if putOnScreen == true then
+        if putOnScreen then
             RNFactory.screen:addRNObject(rnButtonImageDisabled, nil, layer)
         end
     end
 
-    local rnText
 
-    local gFont
-
-    if params.text == nil then
-        params.text = ""
-    end
-
-    rnText = RNText:new()
-    rnText, gFont = rnText:initWithText2(params.text, font, size, rnButtonImage.originalWidth, rnButtonImage.originalHeight, vAlignment, hAlignment)
-    if putOnScreen == true then
-        RNFactory.screen:addRNObject(rnText, nil, layer)
-    end
-
-    --     RNFactory.mainGroup:insert(rnText)
-    rnText.x = left
-    rnText.y = top
-
-
-
+--    if params.text == nil then
+--        params.text = ""
+--    end
 
     local rnButton = RNButton:new()
     rnButton.xOffset = xOffset
     rnButton.yOffset = yOffset
     rnButton:initWith(rnButtonImage, rnButtonImageOver, rnButtonImageDisabled, rnText)
 
-
     if parentGroup ~= nil then
         parentGroup:insert(rnButton)
     end
 
-
-
-    rnButton.x = rnButtonImage.originalWidth / 2 + left
-    rnButton.y = rnButtonImage.originalHeight / 2 + top
+    rnButton.x = width / 2 + left
+    rnButton.y = height / 2 + top
 
     if params.onTouchUp ~= nil then
         rnButton:setOnTouchUp(params.onTouchUp)
@@ -500,7 +446,7 @@ function RNFactory.createButtonFrom(image, layer, params, putOnScreen)
         rnButton:setOnTouchDown(params.onTouchDown)
     end
 
-    if putOnScreen == true then
+    if putOnScreen then
         rnButton.layer = layer
     end
 
