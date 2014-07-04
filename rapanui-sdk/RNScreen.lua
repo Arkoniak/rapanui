@@ -78,6 +78,10 @@ function RNScreen:switchLayer(name)
   self.mainPartition = self.layer:getPartition()
 end
 
+function RNScreen:getLayer(name)
+  return self.layers:get(name), self.layer:getPartition()
+end
+
 function RNScreen:getOrderedLayers()
   return self.orderedLayers
 end
