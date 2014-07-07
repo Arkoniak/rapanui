@@ -30,7 +30,8 @@ function RNScreen:new(o)
         layers = nil,
         orderedLayers = nil,
         defaultTarget = nil,
-        visible = true
+        visible = true,
+        currentLayerName = nil,
     }
 
     setmetatable(o, self)
@@ -63,6 +64,8 @@ function RNScreen:initWith(width, height, screenWidth, screenHeight)
 
     self.orderedLayers = {{name = RNLayer.MAIN_LAYER, layer = self.layer}}
 
+    self.currentLayerName = RNLayer.MAIN_LAYER
+    
     MOAISim.pushRenderPass(self.layer)
 end
 
@@ -74,8 +77,13 @@ function RNScreen:createLayer(name)
 end
 
 function RNScreen:switchLayer(name)
+  local oldLayerName = currentLayerName
+  
+  currentLayerName = name
   self.layer = self.layers:get(name)
   self.mainPartition = self.layer:getPartition()
+  
+  return oldLayerName
 end
 
 function RNScreen:getLayer(name)
