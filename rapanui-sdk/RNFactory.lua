@@ -280,7 +280,7 @@ function RNFactory.createImageFrom(image, layer, params, putOnScreen)
     local o, deck = RNObject:new():initWithImage2(image)
     local parentGroup, left, top, width, height
 
-    putOnScreen = putOnScreen or true
+--    putOnScreen = putOnScreen or true
 
     params = params or {}
     top = params.top or 0
