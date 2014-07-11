@@ -268,7 +268,7 @@ end
 
 function RNFactory.createImage(image, params)
 --    return RNFactory.createImageFrom(image, RNFactory.screen.layers:get(RNLayer.MAIN_LAYER), params)
-  return RNFactory.createImageFrom(image, RNFactory.screen.layer, params)
+  return RNFactory.createImageFrom(image, RNFactory.screen.layer, params, true)
 end
 
 function RNFactory.loadImage(image, params)
@@ -279,8 +279,6 @@ end
 function RNFactory.createImageFrom(image, layer, params, putOnScreen)
     local o, deck = RNObject:new():initWithImage2(image)
     local parentGroup, left, top, width, height
-
---    putOnScreen = putOnScreen or true
 
     params = params or {}
     top = params.top or 0
@@ -308,7 +306,7 @@ end
 
 function RNFactory.createButton(image, params)
     --return RNFactory.createButtonFrom(image, RNFactory.screen.layers:get(RNLayer.MAIN_LAYER), params)
-    return RNFactory.createButtonFrom(image, RNFactory.screen.layer, params)
+    return RNFactory.createButtonFrom(image, RNFactory.screen.layer, params, true)
 end
 
 function RNFactory.loadButton(image, params)
@@ -319,12 +317,6 @@ end
 
 function RNFactory.createButtonFrom(image, layer, params, putOnScreen)
     local rnButtonImage, deck = RNObject:new():initWithImage2(image)
-
---    if putOnScreen == nil then
---        putOnScreen = true
---    end
-    
-    putOnScreen = putOnScreen or true
 
     local parentGroup
 

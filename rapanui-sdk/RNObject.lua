@@ -519,7 +519,6 @@ function RNObject:initWithImage2(image)
         end
     end
 
-
     if RNGraphicsManager:getGfxByPath(image).isInAtlas then
         self.originalWidth = RNGraphicsManager:getGfxByPath(image).sizes[numberInAtlas].w
         self.originalHeight = RNGraphicsManager:getGfxByPath(image).sizes[numberInAtlas].h
