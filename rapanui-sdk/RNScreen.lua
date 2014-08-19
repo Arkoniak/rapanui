@@ -27,7 +27,8 @@ function RNScreen:new(o)
     layer = nil,
     layers = nil,
     orderedLayers = nil,
-    defaultTarget = nil,
+    backTarget = nil,
+		coverTarget = nil,
     visible = true,
     currentLayerName = nil,
   }
@@ -86,7 +87,11 @@ function RNScreen:switchLayer(name)
 end
 
 function RNScreen:getLayer(name)
-  return self.layers:get(name), self.layers:get(name):getPartition()
+  if name then
+    return self.layers:get(name), self.layers:get(name):getPartition()
+  else
+    return self.layer, self.mainPartition
+  end
 end
 
 function RNScreen:getOrderedLayers()
@@ -102,8 +107,12 @@ function RNScreen:setLayersOrder(layersOrder)
   self.orderedLayers = newLayersOrder
 end
 
-function RNScreen:setDefaultTarget(defaultTarget)
+function RNScreen:setBackTarget(backTarget)
   self.defaultTarget = defaultTarget
+end
+
+function RNScreen:setCoverTarget(coverTarget)
+	self.coverTarget = coverTarget
 end
 
 --[[
@@ -201,6 +210,11 @@ end
 
 function RNScreen:getObjectWithHighestLevelOn(x, y, layer)
   layer = layer or self.layer
+
+	if self.coverTarget and self.coverTarget.layer == layer then
+		return self.coverTarget
+	end
+
   local partition = layer:getPartition() or self.mainPartition
 
   local props
@@ -222,8 +236,8 @@ function RNScreen:getObjectWithHighestLevelOn(x, y, layer)
     end
   end
 
-  if self.defaultTarget.layer == layer then
-    return self.defaultTarget
+  if self.backTarget and self.backTarget.layer == layer then
+    return self.backTarget
   else
     return nil
   end

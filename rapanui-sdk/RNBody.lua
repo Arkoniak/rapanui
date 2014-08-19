@@ -344,6 +344,13 @@ function RNBody:setLinearVelocity(valuex, valuey)
     self.body:setLinearVelocity(valuex, valuey)
 end
 
+function RNBody:getInertia()
+    return self.body:getInertia()
+end
+
+function RNBody:getMass()
+    return self.body:getMass()
+end
 
 --sets all fixture of this body as sensors
 function RNBody:setSensor(value)
@@ -353,9 +360,6 @@ function RNBody:setSensor(value)
         self.fixturelist[i].sensor = value
     end
 end
-
-
-
 
 
 
@@ -392,11 +396,12 @@ end
 
 --body:setMassData(number mass [, number I, number centerX, number centerY ])
 function RNBody:setMassData(mass, I, centerX, centerY)
-    if (I == nil) then self.body:setMassData(mass)
-    elseif (centerX == nil) then self.body:setMassData(mass, I)
-    elseif (centerY == nil) then self.body:setMassData(mass, I, centerX)
-    else self.body:setMassData(mass, I, centerX, centerY)
-    end
+  self.body:setMassData(mass, I, centerX, centerY)
+--    if (I == nil) then self.body:setMassData(mass)
+--    elseif (centerX == nil) then self.body:setMassData(mass, I)
+--    elseif (centerY == nil) then self.body:setMassData(mass, I, centerX)
+--    else self.body:setMassData(mass, I, centerX, centerY)
+--    end
 end
 
 
@@ -448,15 +453,13 @@ end
 
 -- physic bodies common working methods
 
-
-
-
 --body:applyForce(number forceX, number forceY [, number pointX, number pointY ] )
 function RNBody:applyForce(forceX, forceY, pointX, pointY)
-    if (pointX == nil) then self.body:applyForce(forceX, forceY)
-    elseif (pointY == nil) then self.body:applyForce(forceX, forceY, pointX)
-    else self.body:applyForce(forceX, forceY, pointX, pointY)
-    end
+  self.body:applyForce(forceX, forceY, pointX, pointY)
+--    if (pointX == nil) then self.body:applyForce(forceX, forceY)
+--    elseif (pointY == nil) then self.body:applyForce(forceX, forceY, pointX)
+--    else self.body:applyForce(forceX, forceY, pointX, pointY)
+--    end
 end
 
 --body:applyTorque(number torque)
@@ -466,36 +469,16 @@ end
 
 --body:applyLinearImpulse(number impulseX, number impulseY [, number pointX, number pointY ] )
 function RNBody:applyLinearImpulse(impulseX, impulseY, pointX, pointY)
-    if (pointX == nil) then self.body:applyLinearImpulse(impulseX, impulseY)
-    elseif (pointY == nil) then self.body:applyLinearImpulse(impulseX, impulseY, pointX)
-    else self.body:applyLinearImpulse(impulseX, impulseY, pointX, pointY)
-    end
+  self.body:applyLinearImpulse(impulseX, impulseY, pointX, pointY)
+--    if (pointX == nil) then self.body:applyLinearImpulse(impulseX, impulseY)
+--    elseif (pointY == nil) then self.body:applyLinearImpulse(impulseX, impulseY, pointX)
+--    else self.body:applyLinearImpulse(impulseX, impulseY, pointX, pointY)
+--    end
 end
 
 --body:applyAngularImpulse( number impulse )
 function RNBody:applyAngularImpulse(value)
     self.body:applyAngularImpulse(value)
-end
-
-
-
-
--- additional methods from last update
-
-function RNBody:getInertia()
-    return self.body:getInertia()
-end
-
-function RNBody:getMass()
-    return self.body:getMass()
-end
-
-function RNBody:setMassData(mass, I, centerX, centerY)
-    if I ~= nil then
-        self.body:setMassData(mass, I, centerX, centerY)
-    else
-        self.body:setMassData(mass)
-    end
 end
 
 return RNBody

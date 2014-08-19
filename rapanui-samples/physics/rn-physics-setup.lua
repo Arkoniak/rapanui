@@ -34,26 +34,27 @@ RNPhysics.setCollisions("all")  --optional
 
 --setting up gravity
 RNPhysics.setGravity(0, 10)
-print(RNPhysics.getGravity)
+print(RNPhysics.getGravity())
 
 --Other Methods
 --Changing this after bodies creation will result buggy
 RNPhysics.setMeters(6)
 RNPhysics.setIterations(1, 1)
-print(RNPhysics.getMeters())
+print("Meters: ", RNPhysics.getMeters())
 RNPhysics.setAutoClearForces(true)
-print(RNPhysics.getAutoClearForces())
+print("Auto Clear Forces: ", RNPhysics.getAutoClearForces())
 --after-update methods
-RNPhysics.setAngularSleepTolerance(1)
+RNPhysics.setAngularSleepTolerance()
 RNPhysics.setLinearSleepTolerance(1)
 RNPhysics.setTimeToSleep(1)
-print(RNPhysics.getAngularSleepTolerance())
-print(RNPhysics.getLinearSleepTolerance())
-print(RNPhysics.getTimeToSleep())
+print("AngularSleepTolerance: ", RNPhysics.getAngularSleepTolerance())
+print("LinearSleepTolerance: ", RNPhysics.getLinearSleepTolerance())
+print("Time To Sleep:", RNPhysics.getTimeToSleep())
 
 
 
 --set images as physics objects
+--print(box)
 RNPhysics.createBodyFromImage(box)
 RNPhysics.createBodyFromImage(ball, { shape = "circle" })
 RNPhysics.createBodyFromImage(triangle, { shape = { -32, 32, 0, -32, 32, 32 }, restitution = 0.3, friction = 0.1 })
@@ -63,11 +64,8 @@ ball.restitution = 0.3
 triangle.restitution = 0.3
 
 
-
 --after update some bodies methods
-box:setMassData(5)
-print(box:getInertia())
-print(box:getMass()) 
-
-
-
+box:setMassData(1)
+print("Mass =", box:getMass())
+box:applyLinearImpulse(10, 0)
+print("Inertia =", box:getInertia())

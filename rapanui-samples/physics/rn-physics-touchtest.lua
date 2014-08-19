@@ -76,6 +76,7 @@ RNListeners:addEventListener("touch", screen_touch)
 
 function removeBall(self, event)
     --removes the ball if it touches the floor
+    --print("Is Physical?", self.isPhysical)
     if (event.other.name == "rapanui-samples/physics/floor.png") then self:remove() end
 end
 
@@ -84,6 +85,7 @@ function create_ball(xx, yy)
     --each ball calls the remove ball each collision
     local bb = RNFactory.createImage("rapanui-samples/physics/ball.png"); bb.x = xx; bb.y = yy;
     RNPhysics.createBodyFromImage(bb, { radius = 21, restitution = 0.9, density = 1, friction = 0.3 })
+    --print("Is Physical?", bb.isPhysical)
     bb.collision = removeBall
     bb:addEventListener("collision")
 end

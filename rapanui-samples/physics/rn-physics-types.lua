@@ -33,7 +33,7 @@ RNPhysics.createBodyFromImage(box3, "kinematic")
 RNPhysics.createBodyFromImage(floor, "static")
 
 --remove the object
-box:remove()
+--box:remove()
 
 --[[
 

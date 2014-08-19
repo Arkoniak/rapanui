@@ -33,11 +33,9 @@ config.sizes["test"] = { 700, 1024, 700, 1024 }
 config.sizes["test2"] = { 200, 400, 200, 400 }
 config.sizes["test3"] = { 100, 500, 100, 500 }
 
-
-
 --set lanscape mode and device
 config.landscape = false
-config.device = "iPhone3G"
+config.device = "test"
 
 --set stretch and graphics design
 --this will stretch your graphics to fit device screen size

@@ -986,23 +986,27 @@ end
 
 
 function RNObject:getLocation()
-    return self:getX(), self:getY()
+  return self.x, self.y
+--    return self:getX(), self:getY()
 end
 
+-- Backward compatibility code
 function RNObject:getX()
-    if self.isPhyisic == false then
-        return self.x
-    else
-        return self.physicObject:getX()
-    end
+  return self.x
+--    if self.isPhysical then
+--      return self.physicObject:getX()
+--    else
+--      return self.x
+--    end
 end
 
 function RNObject:getY()
-    if self.isPhyisic == false then
-        return self.y
-    else
-        return self.physicObject:getY()
-    end
+  return self.y
+--    if self.isPhysical == false then
+--        return self.y
+--    else
+--        return self.physicObject:getY()
+--    end
 end
 
 function RNObject:getAlpha()
@@ -1269,12 +1273,13 @@ function RNObject:remove()
         self.scene:removeRNObject(self)
     end
     --print_r(self.scene)
+    -- print("Is Object Physical?", self.isPhysical)
     if self.isPhysical == true then
         self.physicObject:remove()
     else
-        self.prop:setDeck(nil)
+        if self.prop then self.prop:setDeck(nil) end
     end
-    --print("remove", self.idInGroup)
+--    print("remove", self.idInGroup)
     if (self.parentGroup) then
         self.parentGroup:removeChild(self.idInGroup)
     end
@@ -1291,7 +1296,7 @@ function RNObject:remove()
 
     if self.stylesList ~= nil then
         for i = 1, #self.stylesList do
-            print(i)
+--            print(i)
             self.stylesList[i] = nil
         end
         self.styleList = nil
@@ -1301,7 +1306,7 @@ function RNObject:remove()
     self:setOnTouchDown(nil)
     self:setOnTouchMove(nil)
 
-    self.prop:setDeck(nil)
+    if self.prop then self.prop:setDeck(nil) end
     self.prop = nil
     self.deck = nil
     self.tileDeck = nil
@@ -1477,15 +1482,16 @@ function RNObject:getInertia()
 end
 
 function RNObject:getMass()
-    return self.physicObject:getInertia()
+    return self.physicObject:getMass()
 end
 
 function RNObject:setMassData(mass, I, centerX, centerY)
-    if I ~= nil then
-        self.physicObject:setMassData(mass, I, centerX, centerY)
-    else
-        self.physicObject:setMassData(mass)
-    end
+  self.physicObject:setMassData(mass, I, centerX, centerY)
+--    if I ~= nil then
+--        self.physicObject:setMassData(mass, I, centerX, centerY)
+--    else
+--        self.physicObject:setMassData(mass)
+--    end
 end
 
 --fixture methods

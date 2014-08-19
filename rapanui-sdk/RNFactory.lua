@@ -59,17 +59,10 @@ function RNFactory.init()
 
     screenX, screenY = nil
 
-    if config.name ~= nil then
-      name = config.name
-    else
-      local name = rawget(_G, 'name') -- looking for *global* 'name'
-      if name == nil then
-          name = "mainwindow"
-      end
-    end
+    name = config.name or rawget(_G, 'name') or "mainwindow" --  config or global name or dummy name
 
     --  lwidth, lheight from the SDConfig.lua
-
+    
     MOAISim.openWindow(name, screenlwidth, screenHeight)
     RNFactory.screen:initWith(lwidth, lheight, screenlwidth, screenHeight)
 

@@ -51,7 +51,7 @@ end      --]]
 --require("rapanui-samples/lists/rn-rnListView")
 --require("rapanui-samples/lists/rn-rnListView-multilist")
 --require("rapanui-samples/lists/rn-rnPageSwipe")
-require("rapanui-samples/lists/rn-rnPageSwipe-multiswipe")
+--require("rapanui-samples/lists/rn-rnPageSwipe-multiswipe")
 
 -- Menu
 --require("rapanui-samples/menu/rn-menu-director")
@@ -79,7 +79,7 @@ require("rapanui-samples/lists/rn-rnPageSwipe-multiswipe")
 --require("rapanui-samples/director/rn-director-rnbutton")
 
 -- Buttons
---require("rapanui-samples/buttons/rn-button")
+-- require("rapanui-samples/buttons/rn-button")
 --require("rapanui-samples/buttons/rn-button-disabled")
 
 -- Timer
@@ -146,7 +146,7 @@ require("rapanui-samples/lists/rn-rnPageSwipe-multiswipe")
 --require("rapanui-samples/physics/rn-physics-touchtest")
 --require("rapanui-samples/physics/rn-physics-animation")
 --require("rapanui-samples/physics/rn-physics-setup")
---require("rapanui-samples/physics/rn-physics-lists")
+require("rapanui-samples/physics/rn-physics-lists")
 --require("rapanui-samples/physics/rn-physics-physicsEditor")
 --require("rapanui-samples/physics/rn-physics-touchMove")
 --require("rapanui-samples/physics/test")
